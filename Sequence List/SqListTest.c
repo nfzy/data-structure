@@ -96,32 +96,44 @@ typedef struct
 } SqList;
 
 Status GetElem(SqList, int, ElemType *);
-Status GetIndex(SqList, int);
+Status GetIndex(SqList, ElemType);
+Status InitList(SqList *);
+Status ListInsert(SqList *, int, ElemType);
 
 int main(int argc, char const *argv[])
 {
     SqList L;
-    for (int i = 0; i < MAXSIZE; i++)
-    {
-        // 向数组中添加数据
-        L.data[i] = i * 19;
+    int i, j;
+    InitList(&L);
+    for (j = 1; j <= 5; j++)
+        i = ListInsert(&L, 1, j);
+    printf("%d\n", L.data[1]);
+    // for (int i = 0; i < MAXSIZE; i++)
+    // {
+    //     // 向数组中添加数据
+    //     L.data[i] = i * 19;
 
-        // 每添加一次则长度就要增加1
-        L.length++;
-    }
+    //     // 每添加一次则长度就要增加1
+    //     L.length++;
+    // }
 
-    ElemType iNum = 0, oNum = 0;
-    printf("请输入你需要找哪一个位置的数字：");
-    scanf("%d", &iNum);
-    GetElem(L, iNum, &oNum);
-    printf("%d位置上的数字是：%d\n", iNum, oNum);
+    // ElemType iNum = 0, oNum = 0;
+    // printf("请输入你需要找哪一个位置的数字：");
+    // scanf("%d", &iNum);
+    // GetElem(L, iNum, &oNum);
+    // printf("%d位置上的数字是：%d\n", iNum, oNum);
 
-    printf("请输入你需要找的数字：");
-    scanf("%d", &iNum);
-    GetIndex(L, iNum);
-    printf("%d数字的位置是：%d\n", iNum, GetIndex(L, iNum));
+    // printf("请输入你需要找的数字：");
+    // scanf("%d", &iNum);
+    // GetIndex(L, iNum);
+    // printf("%d数字的位置是：%d\n", iNum, GetIndex(L, iNum));
 
     return 0;
+}
+Status InitList(SqList *L)
+{
+    L->length = 0;
+    return OK;
 }
 
 // 顺序线性表L存在，则1<=i<=ListLength(L);
@@ -157,4 +169,23 @@ Status GetIndex(SqList L, ElemType e)
     }
 
     return i + 1;
+}
+
+Status ListInsert(SqList *L, int i, ElemType e)
+{
+    int k;
+    if (L->length == MAXSIZE) /* 顺序线性表已经满 */
+        return ERROR;
+    if (i < 1 || i > L->length + 1) /* 当i比第一位置小或者比最后一位置后一位置还要大时 */
+        return ERROR;
+
+    if (i <= L->length) /* 若插入数据位置不在表尾 */
+    {
+        for (k = L->length - 1; k >= i - 1; k--) /* 将要插入位置之后的数据元素向后移动一位 */
+            L->data[k + 1] = L->data[k];
+    }
+    L->data[i - 1] = e; /* 将新元素插入 */
+    L->length++;
+
+    return OK;
 }
